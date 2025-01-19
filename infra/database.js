@@ -1,6 +1,5 @@
 import { Client } from "pg";
 
-
 function getSSLValues() {
   if (process.env.POSTGRES_CA) {
     return {
@@ -11,7 +10,7 @@ function getSSLValues() {
   return process.env.NODE_ENV === 'production' ? true : false;
 };
 
-function getClient() {
+async function getNewClient() {
   const client = new Client({
     host: process.env.POSTGRES_HOST,
     database: process.env.POSTGRES_DB,
@@ -21,15 +20,15 @@ function getClient() {
     ssl: getSSLValues(),
   });
 
+  await client.connect();
   return client;
 }
 
 async function query(queryObject) {
-  const client = getClient();
+  let client;
 
   try {
-    await client.connect();
-
+    client = await getNewClient();
     const result = await client.query(queryObject);
     return result;
   } catch (error) {
@@ -65,6 +64,7 @@ async function usedConnections(databaseName = undefined) {
 };
 
 export default {
+  getNewClient,
   query,
   version,
   maxConnections,
