@@ -1,4 +1,4 @@
-import database from 'infra/database';
+import database from "infra/database";
 
 async function status(request, response) {
   const { databaseName } = request.query;
@@ -15,7 +15,7 @@ async function status(request, response) {
         version: version,
         max_connections: Number(maxConnections),
         opened_connections: Number(usedConnections),
-      }
+      },
     },
   });
 }
