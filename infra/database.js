@@ -64,10 +64,12 @@ async function usedConnections(databaseName = undefined) {
   return result.rows[0].count;
 }
 
-export default {
+const database = {
   getNewClient,
   query,
   version,
   maxConnections,
   usedConnections,
-};
+}
+
+export default database;
