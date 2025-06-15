@@ -70,6 +70,6 @@ const database = {
   version,
   maxConnections,
   usedConnections,
-}
+};
 
 export default database;
