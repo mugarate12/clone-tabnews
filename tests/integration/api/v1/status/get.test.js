@@ -8,7 +8,6 @@ test("Get to /api/v1/status should return 200", async () => {
   const response = await fetch("http://localhost:3000/api/v1/status");
   const body = await response.json();
   const updated_at = new Date(body.updated_at).toISOString();
-  console.log(body);
 
   expect(response.status).toBe(200);
   expect(body.updated_at).toBeDefined();
