@@ -1,5 +1,5 @@
 import migrationRunner from "node-pg-migrate";
-import { join } from "node:path";
+import { resolve } from "node:path";
 
 import database from "infra/database";
 
@@ -16,7 +16,7 @@ async function migrations(request, response) {
     dbClient = await database.getNewClient();
     const defaultMigrationOptions = {
       dbClient,
-      dir: join("infra", "migrations"),
+      dir: resolve("infra", "migrations"),
       migrationsTable: "pgmigrations",
       dryRun: true,
       direction: "up",
