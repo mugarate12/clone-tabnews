@@ -1,7 +1,7 @@
 import migrationRunner from "node-pg-migrate";
 import { createRouter } from "next-connect";
 import { resolve } from "node:path";
-import { InternalServerError, MethodNotAllowedError } from "infra/errors";
+import controller from "infra/controller";
 
 import database from "infra/database";
 
@@ -10,27 +10,7 @@ const router = createRouter();
 router.get(getHandler);
 router.post(postHandler);
 
-export default router.handler({
-  onNoMatch: onNoMatchHandler,
-  onError: onErrorHandler,
-});
-
-function onNoMatchHandler(request, response) {
-  const publicErrorObject = new MethodNotAllowedError();
-  console.error(publicErrorObject);
-
-  return response.status(405).json(publicErrorObject);
-}
-
-function onErrorHandler(error, request, response) {
-  console.log('erro no controller de status');
-  const publicErrorObject = new InternalServerError({
-    cause: error,
-  });
-  console.error(publicErrorObject);
-
-  return response.status(500).json(publicErrorObject);
-}
+export default router.handler(controller.errorsHandlers);
 
 const defaultMigrationOptions = {
   dir: resolve("infra", "migrations"),
