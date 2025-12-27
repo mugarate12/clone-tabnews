@@ -1,34 +1,50 @@
+import { createRouter } from "next-connect";
 import database from "infra/database";
-import { InternalServerError } from "infra/errors";
+import { InternalServerError, MethodNotAllowedError } from "infra/errors";
 
-async function status(request, response) {
-  try {
-    const { databaseName } = request.query;
+const router = createRouter();
 
-    const updatedAt = new Date().toISOString();
-    const version = await database.version();
-    const maxConnections = await database.maxConnections();
-    const usedConnections = await database.usedConnections(databaseName);
+router.get(getHandler);
 
-    return response.status(200).json({
-      updated_at: updatedAt,
-      dependencies: {
-        database: {
-          version: version,
-          max_connections: Number(maxConnections),
-          opened_connections: Number(usedConnections),
-        },
-      },
-    });
-  } catch (error) {
-    console.log('erro no controller de status');
-    const publicErrorObject = new InternalServerError({
-      cause: error,
-    });
-    console.error(publicErrorObject);
+export default router.handler({
+  onNoMatch: onNoMatchHandler,
+  onError: onErrorHandler,
+});
 
-    return response.status(500).json(publicErrorObject);
-  }
+function onNoMatchHandler(request, response) {
+  const publicErrorObject = new MethodNotAllowedError();
+  console.error(publicErrorObject);
+
+  return response.status(405).json(publicErrorObject);
 }
 
-export default status;
+function onErrorHandler(error, request, response) {
+  console.log('erro no controller de status');
+  const publicErrorObject = new InternalServerError({
+    cause: error,
+  });
+  console.error(publicErrorObject);
+
+  return response.status(500).json(publicErrorObject);
+}
+
+async function getHandler(request, response) {
+  const { databaseName } = request.query;
+
+  const updatedAt = new Date().toISOString();
+  const version = await database.version();
+  const maxConnections = await database.maxConnections();
+  const usedConnections = await database.usedConnections(databaseName);
+
+  return response.status(200).json({
+    updated_at: updatedAt,
+    dependencies: {
+      database: {
+        version: version,
+        max_connections: Number(maxConnections),
+        opened_connections: Number(usedConnections),
+      },
+    },
+  });
+
+}
