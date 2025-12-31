@@ -56,3 +56,23 @@ export class ServiceError extends Error {
     }
   }
 }
+
+export class ValidationError extends Error {
+  constructor({ message = "Dados inválidos fornecidos", action = null, cause = null } = {}) {
+    super(message);
+
+    this.name = "ValidationError";
+    this.cause = cause;
+    this.action = action || "Verifique os dados fornecidos e tente novamente.";
+    this.statusCode = 400;
+  }
+
+  toJSON() {
+    return {
+      name: this.name,
+      message: this.message,
+      action: this.action,
+      status_code: this.statusCode,
+    }
+  }
+}
