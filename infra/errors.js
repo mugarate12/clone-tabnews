@@ -76,3 +76,23 @@ export class ValidationError extends Error {
     }
   }
 }
+
+export class NotFoundError extends Error {
+  constructor({ message = "Não encontrado, por favor, corrija as informações", action = null, cause = null } = {}) {
+    super(message);
+
+    this.name = "NotFoundError";
+    this.cause = cause;
+    this.action = action || "Verifique as informações fornecidas e tente novamente.";
+    this.statusCode = 404;
+  }
+
+  toJSON() {
+    return {
+      name: this.name,
+      message: this.message,
+      action: this.action,
+      status_code: this.statusCode,
+    }
+  }
+}
