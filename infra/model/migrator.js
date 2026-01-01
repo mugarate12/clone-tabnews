@@ -10,6 +10,7 @@ const defaultMigrationOptions = {
   dryRun: true,
   direction: "up",
   verbose: true,
+  log: () => {},
 };
 
 async function listPendingMigrations() {
