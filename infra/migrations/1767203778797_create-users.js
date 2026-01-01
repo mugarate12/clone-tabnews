@@ -27,9 +27,9 @@ exports.up = (pgm) => {
       notNull: true,
       unique: true,
     },
-    // Why 72 is length? https://security.stackexchange.com/questions/39849/does-bcrypt-have-a-maximum-password-length/39851#39851
+    // Why 60 is length? https://www.npmjs.com/package/bcrypt#hash-info
     password: {
-      type: 'varchar(72)',
+      type: 'varchar(60)',
       notNull: true,
     },
 
@@ -37,12 +37,12 @@ exports.up = (pgm) => {
     created_at: {
       type: 'timestamptz',
       notNull: true,
-      default: pgm.func('now()'),
+      default: pgm.func("timezone('utc', now())"),
     },
     updated_at: {
       type: 'timestamptz',
       notNull: true,
-      default: pgm.func('now()'),
+      default: pgm.func("timezone('utc', now())"),
     },
   });
 };
